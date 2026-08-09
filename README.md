@@ -5,7 +5,7 @@
 * Use Boost Beast Advanced server, flex (plain + SSL) as template for handling web operations.
 * Currently developed on Debian Linux platform
 
-## sample configuration file (web.boost.cfg)
+## sample configuration file (www.cfg)
 ```
 thread_count = 2
 port_http = 80

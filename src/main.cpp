@@ -47,7 +47,7 @@ using executor_type = net::strand<net::io_context::executor_type>;
 
 int main( int argc, char* argv[] ) {
 
-  std::string sConfigFilename( "web.boost.cfg" );
+  std::string sConfigFilename( "www.cfg" );
 
   std::cout << "(c)2026 One Unified Net Limited" << std::endl;
 
