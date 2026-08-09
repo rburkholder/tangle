@@ -69,6 +69,8 @@ sudo setcap CAP_NET_BIND_SERVICE=+eip ~/projects/web.boost/build/src/boost.web
 
 ## sample test page (test.lua)
 * influenced by riki's demo code
+* copy src/lua/html.lua to web/lib
+* create test.lua in web/content
   ```
   package.path="web/lib/?.lua"
 
@@ -95,7 +97,7 @@ sudo setcap CAP_NET_BIND_SERVICE=+eip ~/projects/web.boost/build/src/boost.web
       h.p"This is some embedded HTML <p></p>"
     }
   }
-  render( 'text/html', tostring( output ) )
+  Render( 'text/html', tostring( output ) )
   ```
 
 ## alternatives
