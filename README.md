@@ -62,7 +62,7 @@ sudo setcap CAP_NET_BIND_SERVICE=+eip ~/projects/web.boost/build/src/boost.web
 ## current features
 * 2026/08/09
   * use [sol2](https://sol2.readthedocs.io/en/latest/)/[luajit](https://luajit.org/luajit.html) to load and run [lua](https://www.lua.org/manual/5.1/) files
-  * integrates [lua based html generator by riki moe (りき萌)](https://riki.house/lua-html)
+  * integrates [lua based html generator by riki moe (りき萌)](https://riki.house/lua-html#The-part-where-I-do-the-thing)
 * 2026/08/02
   * GET static html and support files from a directory
   * supports HTTP and HTTPS
