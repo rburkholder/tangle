@@ -135,5 +135,30 @@ void lua_method_get( std::string& path, sol_lua_t& sol_lua, http::response<http:
 */
 }
 
+void lua_method_head( std::string& path, sol_lua_t& sol_lua, http::response<http::string_body>& response ) {
+
+  //sol_lua.m_sol.open_libraries( sol::lib::base, sol::lib::package, sol::lib::table, sol::lib::string );
+
+  response.set( http::field::server, c_sVersion );
+
+  sol::load_result script;
+  try {
+    script = sol_lua.m_sol.load_file( path, sol::load_mode::text );
+    if ( script.valid() ) {
+      response.set( http::field::content_type, "text/html" );
+      response.content_length( 0 );
+      return;
+    }
+  }
+  catch ( const sol::error& e ) {
+    BOOST_LOG_TRIVIAL(error) << "lua script error (1): " << e.what();
+  }
+
+  response.result( http::status::not_found );
+  response.set( http::field::content_type, "text/plain");
+  response.body() = "The resource '" + path + "' has error\n";
+  response.prepare_payload();
+}
+
 void lua_method_post( std::string& path, sol_lua_t& sol_lua, http::response<http::string_body>& response ) {
 }
