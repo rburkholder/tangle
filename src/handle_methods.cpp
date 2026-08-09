@@ -70,18 +70,16 @@ void method_post( response_t& response ) {
 
 void lua_method_get( std::string& path, sol_lua_t& sol_lua, http::response<http::string_body>& response ) {
 
-  response.set( http::field::server, c_sVersion );
-  sol_lua.m_sol[ "mime_type" ] = "text/html";
-  sol_lua.m_sol[ "content" ] = "default";
-
   sol_lua.m_sol.open_libraries( sol::lib::base, sol::lib::package, sol::lib::table, sol::lib::string );
+
+  response.set( http::field::server, c_sVersion );
 
   sol::load_result script;
   try {
     script = sol_lua.m_sol.load_file( path, sol::load_mode::text );
     if ( script.valid() ) {
       sol_lua.m_sol.set_function(
-        "build",
+        "render",
         [&response]( const std::string_view type, const std::string_view src ){
           response.set( http::field::content_type, type );
           response.body() = src;

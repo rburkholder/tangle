@@ -1,3 +1,5 @@
+-- courtesy of https://riki.house/lua-html
+
 local html = {}
 setmetatable(html, html)
 

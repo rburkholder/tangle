@@ -60,11 +60,45 @@ sudo setcap CAP_NET_BIND_SERVICE=+eip ~/projects/web.boost/build/src/boost.web
 ```
 
 ## current features
+* 2026/08/09
+  * use [sol2](https://sol2.readthedocs.io/en/latest/)/[luajit](https://luajit.org/luajit.html) to load and run [lua](https://www.lua.org/manual/5.1/) files
+  * integrates [lua based html generator by riki moe (りき萌)](https://riki.house/lua-html)
 * 2026/08/02
   * GET static html and support files from a directory
   * supports HTTP and HTTPS
 
+## sample test page (test.lua)
+* influenced by riki's demo code
+  ```
+  package.path="web/lib/?.lua"
+
+  local h = require( 'html' )
+
+  output = h.Document{
+    lang = "en",
+
+    h.head{
+      h.meta{charset = "UTF-8"},
+      h.title{"Hello, world!"},
+    },
+
+    h.body{
+      h.h1{"Hello, world!"},
+      h.p{
+        "This is an example of the little HTML templating framework."
+      },
+      h.p{
+        "As you can see, it is fully capable of generating any kind of markup ",
+        "you'd ever want.", h.br(),
+        "It can even do things like ", h.b"bold text", "!"
+      },
+      h.p"This is some embedded HTML <p></p>"
+    }
+  }
+  render( 'text/html', tostring( output ) )
+  ```
+
 ## alternatives
-* [wt web toolkit](https://www.webtoolkit.eu/wt/) - designed for single page applications with total control over page generation
-* [drogon web framework](https://drogon.org/) - excellent functionality but comes up short on SSL capability and reliability
+* [wt web toolkit](https://www.webtoolkit.eu/wt/) - designed for single page applications with total control over page generation - not recommeded for internet centric applications - no lua
+* [drogon web framework](https://drogon.org/) - excellent functionality but comes up short on SSL capability and reliability - proprietary web template, no lua
 * [openresty](https://github.com/openresty/openresty) - Web Platform Based on Nginx and LuaJIT - may come back to this
