@@ -65,6 +65,7 @@ void method_get( http::response<http::file_body>& response ) {
 
 void method_post( response_t& response ) {
   response.set( http::field::server, c_sVersion);
+  response.set( http::field::content_type, "text/plain");
   response.body() = "your post was accepted\n";
 }
 
@@ -139,4 +140,44 @@ void lua_method_head( std::string& path, sol_lua_t& sol_lua, http::response<http
 }
 
 void lua_method_post( std::string& path, sol_lua_t& sol_lua, http::response<http::string_body>& response ) {
+
+  sol_lua().open_libraries( sol::lib::base, sol::lib::package, sol::lib::table, sol::lib::string );
+
+  response.set( http::field::server, c_sVersion );
+
+  sol_lua().set_function(
+    "Render",
+    [&response]( const std::string_view type, const std::string_view src ){
+      response.set( http::field::content_type, type );
+      response.body() = src;
+      response.content_length( src.length() );
+    } );
+
+  // todo: pull out body variables and pass to script
+
+  try {
+    auto result = sol_lua().safe_script_file(
+      path,
+      []( lua_State*, sol::protected_function_result pfr ){
+        sol::error err = std::move( pfr );
+        BOOST_LOG_TRIVIAL(error) << "An error (an expected one) occurred: " << err.what();
+        return pfr;
+      }
+    );
+    if ( result.valid() ) {
+      return;
+    }
+    else {
+      BOOST_LOG_TRIVIAL(error) << "lua script result: false";
+    }
+  }
+  catch ( const sol::error& e ) {
+    BOOST_LOG_TRIVIAL(error) << "lua script error: " << e.what();
+  }
+
+  // default error response
+  response.result( http::status::not_found );
+  response.set( http::field::content_type, "text/plain");
+  response.body() = "The resource '" + path + "' has error\n";
+  response.prepare_payload();
 }

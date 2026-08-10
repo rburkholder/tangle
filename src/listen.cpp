@@ -195,6 +195,12 @@ handle_request(
         break;
       case http::verb::post:
         {
+          response_t response{ http::status::ok, request.version() };
+          response.set( http::field::content_type, mt_entry.name );
+          response.keep_alive( request.keep_alive() );
+          lua_method_post( path, sol_lua, response );
+          //response.prepare_payload();
+          return response;
         }
         break;
       case http::verb::head:
