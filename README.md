@@ -76,7 +76,7 @@ sudo setcap CAP_NET_BIND_SERVICE=+eip ~/projects/web.boost/build/src/boost.web
 
   local h = require( 'html' )
 
-  output = h.Document{
+  local output = h.Document{
     lang = "en",
 
     h.head{
