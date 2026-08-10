@@ -25,8 +25,8 @@
 
 namespace {
   const auto& instance_identify = R"(
-local instance, name = ...
-print( 'lua session ' .. instance .. ' ' .. name )
+    local instance, name = ...
+    print( 'lua session ' .. instance .. ' ' .. name )
   )";
 }
 

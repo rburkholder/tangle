@@ -73,11 +73,11 @@ void method_post( response_t& response ) {
 //   use file change to match against cached contents, don't pre-cache though
 void lua_method_get( std::string& path, sol_lua_t& sol_lua, http::response<http::string_body>& response ) {
 
-  sol_lua.m_sol.open_libraries( sol::lib::base, sol::lib::package, sol::lib::table, sol::lib::string );
+  sol_lua().open_libraries( sol::lib::base, sol::lib::package, sol::lib::table, sol::lib::string );
 
   response.set( http::field::server, c_sVersion );
 
-  sol_lua.m_sol.set_function(
+  sol_lua().set_function(
     "Render",
     [&response]( const std::string_view type, const std::string_view src ){
       response.set( http::field::content_type, type );
@@ -86,7 +86,7 @@ void lua_method_get( std::string& path, sol_lua_t& sol_lua, http::response<http:
     } );
 
   try {
-    auto result = sol_lua.m_sol.safe_script_file(
+    auto result = sol_lua().safe_script_file(
       path,
       []( lua_State*, sol::protected_function_result pfr ){
         sol::error err = std::move( pfr );
@@ -121,7 +121,7 @@ void lua_method_head( std::string& path, sol_lua_t& sol_lua, http::response<http
 
   sol::load_result script;
   try {
-    script = sol_lua.m_sol.load_file( path, sol::load_mode::text );
+    script = sol_lua().load_file( path, sol::load_mode::text );
     if ( script.valid() ) {
       response.set( http::field::content_type, "text/html" );
       response.content_length( 0 );

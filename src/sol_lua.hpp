@@ -30,13 +30,17 @@
 class sol_lua_t {
 public:
 
-  sol::state m_sol; // put here for now, or maybe make accessible via lambda
-
   sol_lua_t();
   ~sol_lua_t();
 
+  sol::state& operator()() {
+    return m_sol;
+  }
+
 protected:
 private:
+
+  sol::state m_sol; // put here for now, or maybe make accessible via lambda
 
   static std::atomic_uint64_t m_nInstanceCounter;
   const uint64_t m_nInstance;
