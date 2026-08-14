@@ -1,3 +1,5 @@
+#include <unordered_map>
+
 #include <boost/log/trivial.hpp>
 
 #include <boost/url.hpp>
@@ -50,6 +52,9 @@ struct state_t {
   const char* ssl_name;
   net::ip::tcp::endpoint endpoint;
   const config::Values& choices;
+
+  using mapRequest_t = std::unordered_map<std::string, uint64_t>;
+  mapRequest_t mapRequest;
 
   state_t( const config::Values& choices_, net::ip::tcp::endpoint endpoint_ )
   : bSsl( true ), ssl_name( nullptr )
@@ -149,6 +154,14 @@ handle_request(
       << request.method() << ' ' << '\''
       << path_raw << '\'';
     return bad_request( request, "Illegal request-target (1)", state );
+  }
+
+  state_t::mapRequest_t::iterator iterRequest = state.mapRequest.find( path_raw );
+  if ( state.mapRequest.end() == iterRequest ) {
+    state.mapRequest[ path_raw ] = 1;
+  }
+  else {
+    iterRequest->second++;
   }
 
   // assign root of content directory, use index.html in each directory

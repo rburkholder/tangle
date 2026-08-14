@@ -33,6 +33,10 @@ namespace {
     response.set( http::field::server, c_sVersion );
     response.set( "x-clacks-overhead", "GNU Terry Pratchett" );
   }
+
+  void function_request_stats() {
+
+  }
 }
 
 void response_bad_request( response_t& response, const boost::beast::string_view why ) {
@@ -86,11 +90,18 @@ void lua_method_get( std::string& path, sol_lua_t& sol_lua, http::response<http:
 
   sol_lua().set_function(
     "Render",
-    [&response]( const std::string_view type, const std::string_view src ){
+    [&response]( const std::string_view type, const std::string_view body ){
       response.set( http::field::content_type, type );
-      response.body() = src;
-      response.content_length( src.length() );
+      response.body() = body;
+      response.content_length( body.length() );
     } );
+
+  sol_lua().set_function(
+    "GetFunction",
+    []( const std::string_view svFunctionName ){
+
+    }
+  );
 
   try {
     auto result = sol_lua().safe_script_file(
