@@ -167,7 +167,7 @@ handle_request(
   // assign root of content directory, use index.html in each directory
   std::string path;
   if ( '/' == path_raw.back() ) {
-    path = path_cat( state.choices.sContentDirectory, path_raw ) + "index.html";
+    path = path_cat( state.choices.sContentDirectory, path_raw ) + "index.lua";
   }
   else {
     path = path_cat( state.choices.sContentDirectory, path_raw );
