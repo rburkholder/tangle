@@ -44,19 +44,25 @@ namespace {
 void response_bad_request( response_t& response, const boost::beast::string_view why ) {
   response_common( response );
   response.set( http::field::content_type, "text/plain");
-  response.body() = std::string( why );
+  // need to filter properly for XSS issues, maybe perform escaping
+  //response.body() = std::string( why );
+  response.body() = "bad request\n";
 }
 
 void response_not_found( response_t& response, const boost::beast::string_view target ) {
   response_common( response );
   response.set( http::field::content_type, "text/plain");
-  response.body() = "The resource '" + std::string( target ) + "' was not found.\n";
+  // need to filter properly for XSS issues, maybe perform escaping
+  //response.body() = "The resource '" + std::string( target ) + "' was not found.\n";
+  response.body() = "The resource was not found\n";
 }
 
 void response_server_error( response_t& response, const boost::beast::string_view what ) {
   response_common( response );
   response.set( http::field::content_type, "text/plain");
-  response.body() = "An error occurred: '" + std::string( what ) + "'\n";
+  // need to filter properly for XSS issues, maybe perform escaping
+  //response.body() = "An error occurred: '" + std::string( what ) + "'\n";
+  response.body() = "An error occurred\n";
 }
 
 void resource_robots_txt( response_t& response ) {
