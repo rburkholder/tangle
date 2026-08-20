@@ -20,6 +20,7 @@
  */
 
 #include <string>
+#include <unordered_map>
 
 #include <boost/log/trivial.hpp>
 
@@ -37,6 +38,7 @@ namespace {
   void function_request_stats() {
 
   }
+
 }
 
 void response_bad_request( response_t& response, const boost::beast::string_view why ) {
@@ -98,8 +100,15 @@ void lua_method_get( std::string& path, sol_lua_t& sol_lua, http::response<http:
 
   sol_lua().set_function(
     "GetFunction",
-    []( const std::string_view svFunctionName ){
-
+    [&sol_lua,&response]( const std::string_view svFunctionName ) {
+      using mapFunctions_t = std::unordered_map<std::string, std::function<void()>>;
+      mapFunctions_t mapFunctions;
+      mapFunctions[ "GetStats" ] = [&sol_lua](){
+        sol_lua().set_function(
+          "GetStats",
+          [](){}
+        );
+      };
     }
   );
 
