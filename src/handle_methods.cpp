@@ -19,15 +19,18 @@
  * Created: July 22, 2026 18:36
  */
 
+#include <chrono>
 #include <string>
 #include <unordered_map>
 
 #include <boost/log/trivial.hpp>
 
+#include <fmt/chrono.h>
+
 #include "handle_methods.hpp"
 
 namespace {
-  static const std::string c_sVersion( "ounl web server with lua v1.0");
+  static const std::string c_sVersion( "ounl-lua/1.0");
 
   template<typename Response>
   void response_common( Response& response ) {
@@ -36,7 +39,8 @@ namespace {
   }
 
   void function_request_stats() {
-
+    // don't bother with the indirection, just link in all functions, and then migrate to
+    // a library format or other grouping mechanism for faster loading
   }
 
 }
@@ -100,9 +104,28 @@ void lua_method_get( std::string& path, sol_lua_t& sol_lua, http::response<http:
     "Render",
     [&response]( const std::string_view type, const std::string_view body ){
       response.set( http::field::content_type, type );
+      {
+        const auto now( floor<std::chrono::seconds>( std::chrono::utc_clock::now() ) );
+        const auto dtNow( fmt::format( "{:%Y%m%d%H%M%S}", now ) );
+        const auto expiry( now + std::chrono::days( 7 ) );
+        // Wed, 09 Jun 2021 10:18:14 GMT
+        const auto dtExpire( fmt::format( "{:%a, %d %b %Y %H:%M:%S} GMT", expiry ) );
+        response.set( http::field::set_cookie, "TS=" + dtNow + "; Path=/; Expires=" + dtExpire );
+      }
       response.body() = body;
       response.content_length( body.length() );
     } );
+
+  sol_lua().set_function(
+    "GetTimeStamp",
+    []()->std::string {
+      const auto now = floor<std::chrono::seconds>( std::chrono::utc_clock::now() );
+      // Wed, 09 Jun 2021 10:18:14 GMT
+      const auto dt1( fmt::format( "{:%a, %d %b %Y %H:%M:%S} GMT", now ) );
+      const auto dt2( fmt::format( "{:%Y%m%d%H%M%S}", now ) );
+      return dt1 + '-' + dt2;
+    }
+  );
 
   sol_lua().set_function(
     "GetFunction",

@@ -30,7 +30,7 @@ certificate_path_privkey = certs/privkey.pem
 * add luajit and sol2
 
 ### build lua modules: luajit, sol2
-```
+```bash
 # acquire, build & install luajit
 git clone --depth=1 https://github.com/LuaJIT/LuaJIT.git
 pushd LuaJIT
@@ -44,8 +44,20 @@ git clone --depth=1 https://github.com/ThePhD/sol2.git
 sudo mv -n sol2/include/sol /usr/local/include/
 ```
 
-### build project
+### build fmt
+```bash
+git clone --depth=1 https://github.com/fmtlib/fmt.git
+pushd fmt
+mkdir build
+cd build
+cmake -D FMT_TEST=FALSE ..
+make
+sudo make install
+popd
 ```
+
+### build project
+```bash
 mkdir build
 cd build
 cmake ..
@@ -54,7 +66,7 @@ make
 
 ## security, run
 To run on a port under 1024, requires something like:
-```
+```bash
 sudo setcap CAP_NET_BIND_SERVICE=+eip ~/projects/web.boost/build/src/boost.web
 ~/projects/web.boost/build/src/boost.web
 ```
@@ -71,7 +83,7 @@ sudo setcap CAP_NET_BIND_SERVICE=+eip ~/projects/web.boost/build/src/boost.web
 * influenced by riki's demo code
 * copy src/lua/html.lua to web/lib
 * create test.lua in web/content
-  ```
+  ```lua
   package.path="web/lib/?.lua"
 
   local h = require( 'html' )

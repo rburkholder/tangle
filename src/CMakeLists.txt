@@ -70,4 +70,5 @@ target_link_libraries(
     luajit-5.1
     crypto
     ssl
+    fmt
   )
