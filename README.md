@@ -3,7 +3,9 @@
 ## introduction
 
 * Use Boost Beast Advanced server, flex (plain + SSL) as template for handling web operations.
-* Currently developed on Debian Linux platform
+* Currently developed on Debian Linux Trixie
+* integrates [lua based html generator by riki moe (りき萌)](https://riki.house/lua-html#The-part-where-I-do-the-thing)
+
 
 ## sample configuration file (www.cfg)
 ```
@@ -27,7 +29,7 @@ certificate_path_privkey = certs/privkey.pem
 ## build outline
 * compile environment: C++20
 * requires libssl-dev, libboost-dev (json, log, program_options, serialization, url)
-* add luajit and sol2
+* add luajit, sol2 and fmt
 
 ### build lua modules: luajit, sol2
 ```bash
@@ -58,10 +60,13 @@ popd
 
 ### build project
 ```bash
+git clone --depth=1 https://github.com/rburkholder/boost.web.git
+pushd boost.web
 mkdir build
 cd build
 cmake ..
 make
+popd
 ```
 
 ## security, run
@@ -74,7 +79,6 @@ sudo setcap CAP_NET_BIND_SERVICE=+eip ~/projects/web.boost/build/src/boost.web
 ## current features
 * 2026/08/09
   * use [sol2](https://sol2.readthedocs.io/en/latest/)/[luajit](https://luajit.org/luajit.html) to load and run [lua](https://www.lua.org/manual/5.1/) files
-  * integrates [lua based html generator by riki moe (りき萌)](https://riki.house/lua-html#The-part-where-I-do-the-thing)
 * 2026/08/02
   * GET static html and support files from a directory
   * supports HTTP and HTTPS
@@ -111,6 +115,8 @@ sudo setcap CAP_NET_BIND_SERVICE=+eip ~/projects/web.boost/build/src/boost.web
   }
   Render( 'text/html', tostring( output ) )
   ```
+## reference
+* [The Evolution of Lua](https://lua.org/doc/hopl.pdf)
 
 ## alternatives
 * [wt web toolkit](https://www.webtoolkit.eu/wt/) - designed for single page applications with total control over page generation - not recommeded for internet centric applications - no lua
