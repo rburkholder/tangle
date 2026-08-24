@@ -19,9 +19,6 @@
  * Created: August 5, 2026 15:47:57
  */
 
-// The Evolution of Lua
-// https://lua.org/doc/hopl.pdf
-
 #include <boost/log/trivial.hpp>
 
 #include "sol_lua.hpp"
