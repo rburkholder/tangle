@@ -2,6 +2,8 @@
 
 #include <boost/log/trivial.hpp>
 
+#include <boost/scope/defer.hpp>
+
 #include <boost/url.hpp>
 
 #include <boost/beast/ssl.hpp>
@@ -46,15 +48,17 @@ path_cat(
 
 using response_t = http::response<http::string_body>;
 
+namespace {
+  using mapRequest_t = std::unordered_map<std::string, uint64_t>;
+  mapRequest_t mapRequest;
+}
+
 struct state_t {
 
   bool bSsl;
   const char* ssl_name;
   net::ip::tcp::endpoint endpoint;
   const config::Values& choices;
-
-  using mapRequest_t = std::unordered_map<std::string, uint64_t>;
-  mapRequest_t mapRequest;
 
   state_t( const config::Values& choices_, net::ip::tcp::endpoint endpoint_ )
   : bSsl( true ), ssl_name( nullptr )
@@ -115,6 +119,21 @@ handle_request(
 
   static const mime_type mt;
 
+  std::string path;
+  uint64_t count {};
+  std::string message( "OK" );
+  boost::scope::defer_guard guard{
+    [&message,&state,&request,&path,&count](){
+      // log the action
+      BOOST_LOG_TRIVIAL(info)
+        << state.endpoint.address() << ':' << state.endpoint.port() << " "
+        << "'" << message << "', "
+        << "request: "
+        << ( state.bSsl ? ( ( nullptr == state.ssl_name ) ? "unnamed" : state.ssl_name ) : ( "http") ) << ", "
+        << request.method() << ", '" << request.target() << "', '" << path << "', " << count;
+    }
+  };
+
   switch ( request.method() ) {
     case http::verb::get:
     case http::verb::head:
@@ -122,20 +141,14 @@ handle_request(
       // handle these further down
       break;
     default:
-      BOOST_LOG_TRIVIAL(warning)
-        << state.endpoint.address() << ':' << state.endpoint.port() << " "
-        << "unknown method: '"
-        << request.method() << "'"
-        ;
-      return bad_request( request, "Unknown HTTP-method", state );
+      message = "unknown http method";
+      return bad_request( request, message, state );
   }
 
   // ensure properly formed URL
   const boost::system::result<boost::urls::url_view> url = boost::urls::parse_origin_form( request.target() );
   if ( url.has_error() ) {
-    BOOST_LOG_TRIVIAL(warning)
-      << state.endpoint.address() << ':' << state.endpoint.port() << " "
-      << "server error: " << request.method() << " '" << request.target() << '\'';
+    message = "url has error";
     return server_error( request, request.target(), state );
   }
 
@@ -148,24 +161,24 @@ handle_request(
        || beast::string_view::npos != path_raw.find( "/." ) // hidden file/folder, includes backtrack
     // || beast::string_view::npos != path_raw.find( ".." ) // path backtrack
   ) {
-    BOOST_LOG_TRIVIAL(warning)
-      << state.endpoint.address() << ':' << state.endpoint.port() << " "
-      << " illegal target "
-      << request.method() << ' ' << '\''
-      << path_raw << '\'';
-    return bad_request( request, "Illegal request-target (1)", state );
+    message = "illegal request target (1)";
+    return bad_request( request, message, state );
   }
 
-  state_t::mapRequest_t::iterator iterRequest = state.mapRequest.find( path_raw );
-  if ( state.mapRequest.end() == iterRequest ) {
-    state.mapRequest[ path_raw ] = 1;
-  }
-  else {
-    iterRequest->second++;
+  // todo: make thread safe
+  {
+    //const std::string raw( path_raw );
+    mapRequest_t::iterator iterRequest = mapRequest.find( path_raw );
+    if ( mapRequest.end() == iterRequest ) {
+      count = 1;
+      mapRequest[ path_raw ] = count;
+    }
+    else {
+      count = ++(iterRequest->second);
+    }
   }
 
   // assign root of content directory, use index.html in each directory
-  std::string path;
   if ( '/' == path_raw.back() ) {
     path = path_cat( state.choices.sContentDirectory, path_raw ) + "index.lua";
   }
@@ -173,16 +186,10 @@ handle_request(
     path = path_cat( state.choices.sContentDirectory, path_raw );
   }
 
-  // log the action
-  BOOST_LOG_TRIVIAL(info)
-    << state.endpoint.address() << ':' << state.endpoint.port() << " "
-    << "request: "
-    << ( state.bSsl ? ( ( nullptr == state.ssl_name ) ? "unnamed" : state.ssl_name ) : ( "http") ) << ", "
-    << request.method() << ", '" << request.target() << "', '" << path << "', '" << url->query() << "'";
-
   const mime_type::entry_t mt_entry( mt.lu( path ) );
   if ( mime_type::type_t::unknown == mt_entry.type ) {
-    return bad_request( request, "Illegal request-target (2)", state );
+    message = "llegal request-target (2)";
+    return bad_request( request, message, state );
   }
 
   if ( mime_type::type_t::lua == mt_entry.type ) {
@@ -197,13 +204,16 @@ handle_request(
           return response;
         }
         catch( boost::system::system_error& ec ) {
-          BOOST_LOG_TRIVIAL(error) << "lua (1) " << ec.code() << ": " << ec.what();
+          message = "lua (1) ";
+          BOOST_LOG_TRIVIAL(error) << message << ec.code() << ": " << ec.what();
         }
         catch( std::exception& e ) {
-          BOOST_LOG_TRIVIAL(error) << "lua (2) " << e.what();
+          message = "lua (2) ";
+          BOOST_LOG_TRIVIAL(error) << message << e.what();
         }
         catch (...) {
-          BOOST_LOG_TRIVIAL(error) << "lua (3) problems";
+          message = "lua (3) problems";
+          BOOST_LOG_TRIVIAL(error) << message;
         }
         break;
       case http::verb::post:
