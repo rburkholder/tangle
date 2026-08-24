@@ -126,11 +126,11 @@ handle_request(
     [&message,&state,&request,&path,&count](){
       // log the action
       BOOST_LOG_TRIVIAL(info)
-        << state.endpoint.address() << ':' << state.endpoint.port() << " "
-        << "'" << message << "', "
-        << "request: "
-        << ( state.bSsl ? ( ( nullptr == state.ssl_name ) ? "unnamed" : state.ssl_name ) : ( "http") ) << ", "
-        << request.method() << ", '" << request.target() << "', '" << path << "', " << count;
+        << state.endpoint.address() << ':' << state.endpoint.port() << ','
+        << "'" << message << "','"
+        << ( state.bSsl ? ( ( nullptr == state.ssl_name ) ? "unnamed" : state.ssl_name ) : ( "http") ) << "','"
+        << request.method() << "','" << request.target() << "','" << path << "',"
+        << mapRequest.size() << "," << count;
     }
   };
 
@@ -167,7 +167,6 @@ handle_request(
 
   // todo: make thread safe
   {
-    //const std::string raw( path_raw );
     mapRequest_t::iterator iterRequest = mapRequest.find( path_raw );
     if ( mapRequest.end() == iterRequest ) {
       count = 1;
@@ -261,11 +260,13 @@ handle_request(
           return response;
         }
         else {
+          message = "not found";
           return not_found( request, request.target(), state );
         }
       }
       else {
         // Handle an unknown error
+        message = "file open error";
         return server_error( request, ec.message(), state );
       }
     }
@@ -318,7 +319,8 @@ handle_request(
     }
   }
 
-  return server_error( request, "functionally unreachable", state );
+  message = "functionally unreachable";
+  return server_error( request, message, state );
 }
 
 template<typename Stream>
