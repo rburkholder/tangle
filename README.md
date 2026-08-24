@@ -122,3 +122,4 @@ sudo setcap CAP_NET_BIND_SERVICE=+eip ~/projects/web.boost/build/src/boost.web
 * [wt web toolkit](https://www.webtoolkit.eu/wt/) - designed for single page applications with total control over page generation - not recommeded for internet centric applications - no lua
 * [drogon web framework](https://drogon.org/) - excellent functionality but comes up short on SSL capability and reliability - proprietary web template, no lua
 * [openresty](https://github.com/openresty/openresty) - Web Platform Based on Nginx and LuaJIT - may come back to this
+* [luvit](https://luvit.io/) - Asynchronous I/O for Lua
