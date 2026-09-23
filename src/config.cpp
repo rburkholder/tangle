@@ -108,8 +108,8 @@ bool Load( const std::string& sFileName, Values& values ) {
 
       ( sValue_listen_address.c_str(), po::value<std::string>( &values.sListenAddress )->default_value( "0.0.0.0" ), "listen address" )
 
-      ( sValue_Certificate_Path_FullChain.c_str(), po::value<std::string>( &values.sCertificatePathFullChain ), "path for certificate full chain" )
-      ( sValue_Certificate_Path_PrivKey.c_str(), po::value<std::string>( &values.sCertfificatePathPrivKey ), "path for certificate private key" )
+      ( sValue_Certificate_Path_FullChain.c_str(), po::value<std::string>( &values.sCertificatePathFullChain )->default_value( "" ), "path for certificate full chain" )
+      ( sValue_Certificate_Path_PrivKey.c_str(), po::value<std::string>( &values.sCertfificatePathPrivKey )->default_value( "" ), "path for certificate private key" )
 
       ;
     po::variables_map vm;
@@ -143,7 +143,13 @@ bool Load( const std::string& sFileName, Values& values ) {
       bOk &= parse<std::string>( sFileName, vm, sValue_listen_address, values.sListenAddress );
 
       bOk &= parse<std::string>( sFileName, vm, sValue_Certificate_Path_FullChain, values.sCertificatePathFullChain );
+      if ( 0 == values.sCertificatePathFullChain.size() ) {
+        BOOST_LOG_TRIVIAL(warning) << "no certificate path found";
+      }
       bOk &= parse<std::string>( sFileName, vm, sValue_Certificate_Path_PrivKey, values.sCertfificatePathPrivKey );
+      if ( 0 == values.sCertificatePathFullChain.size() ) {
+        BOOST_LOG_TRIVIAL(warning) << "no private key path found";
+      }
 
     }
   }

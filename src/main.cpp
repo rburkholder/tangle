@@ -73,7 +73,9 @@ int main( int argc, char* argv[] ) {
   ssl::context ctx{ ssl::context::tlsv12 };
 
   // This holds the self-signed certificate used by the server
-  load_server_certificate( ctx, choices.sCertificatePathFullChain, choices.sCertfificatePathPrivKey );
+  if ( ( 0 < choices.sCertificatePathFullChain.size() ) && ( 0 < choices.sCertfificatePathPrivKey.size() ) ) {
+    load_server_certificate( ctx, choices.sCertificatePathFullChain, choices.sCertfificatePathPrivKey );
+  }
 
   // Track coroutines
   task_group task_group{ ioc.get_executor() };
