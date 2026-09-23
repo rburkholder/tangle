@@ -365,8 +365,8 @@ run_websocket_session(
       throw boost::system::system_error{ ec };
 
     // Echo the message back
-    ws.text(ws.got_text());
-    co_await ws.async_write(buffer.data());
+    ws.text( ws.got_text() );
+    co_await ws.async_write( buffer.data() );
 
     // Clear the buffer
     buffer.consume( buffer.size() );
@@ -584,4 +584,3 @@ listen(
     );
   }
 }
-
