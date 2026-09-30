@@ -29,6 +29,9 @@
 
 #include "handle_methods.hpp"
 
+// how-to: build folder with index.lua.  folder is the long name for seo, auto runs the index.lua file for content
+//   folder name is redirect to index file?
+
 namespace {
   static const std::string c_sVersion( "ounl-lua/1.0");
 
