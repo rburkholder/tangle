@@ -1,13 +1,15 @@
-# web.boost
+# tangle
 
 ## introduction
+
+C++ / Lua / JavaScript / TailWindCSS
 
 * Use Boost Beast Advanced server, flex (plain + SSL) as template for handling web operations.
 * Currently developed on Debian Linux Trixie
 * integrates [lua based html generator by riki moe (りき萌)](https://riki.house/lua-html#The-part-where-I-do-the-thing)
 
 
-## sample configuration file (www.cfg)
+## sample configuration file (tangle.cfg)
 ```
 thread_count = 2
 port_http = 80
