@@ -15,9 +15,9 @@ thread_count = 2
 port_http = 80
 port_https = 443
 listen_address = 0.0.0.0
-content_directory = web/content
+content_directory = www/content
+static_directory = www/static
 static_host = static.example.com
-static_directory = web/static
 static_extension = jpg
 static_extension = jpeg
 static_extension = png
@@ -62,8 +62,8 @@ popd
 
 ### build project
 ```bash
-git clone --depth=1 https://github.com/rburkholder/boost.web.git
-pushd boost.web
+git clone --depth=1 https://github.com/rburkholder/tangle.git
+pushd tangle
 mkdir build
 cd build
 cmake ..
@@ -74,8 +74,7 @@ popd
 ## security, run
 To run on a port under 1024, requires something like:
 ```bash
-sudo setcap CAP_NET_BIND_SERVICE=+eip ~/projects/web.boost/build/src/boost.web
-~/projects/web.boost/build/src/boost.web
+sudo setcap CAP_NET_BIND_SERVICE=+eip ~/projects/tangle/build/src/tangle
 ```
 
 ## current features
