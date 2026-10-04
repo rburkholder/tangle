@@ -27,7 +27,8 @@
 
 #include <thread>
 #include <vector>
-#include <iostream>
+
+#include <boost/log/trivial.hpp>
 
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
@@ -49,7 +50,7 @@ int main( int argc, char* argv[] ) {
 
   std::string sConfigFilename( "tangle.cfg" );
 
-  std::cout << "(c)2026 One Unified Net Limited" << std::endl;
+  BOOST_LOG_TRIVIAL(info) << "(c)2026 One Unified Net Limited";
 
   // Check command line arguments.
   if( 2 == argc ) {
@@ -69,8 +70,8 @@ int main( int argc, char* argv[] ) {
   const uint16_t nThreads = std::thread::hardware_concurrency();
   if ( choices.nThreads == nThreads ) {}
   else {
-    std::cout
-      << "suggested hardware maximum threads (" << nThreads << "),"
+    BOOST_LOG_TRIVIAL(warning)
+      << "suggested hardware maximum threads (" << nThreads << "), "
       << "configuration specified threads (" << choices.nThreads << ")";
   }
 
@@ -100,7 +101,7 @@ int main( int argc, char* argv[] ) {
               std::rethrow_exception(e);
           }
           catch ( std::exception& e ) {
-            std::cerr << "Error in listener: " << e.what() << "\n";
+            BOOST_LOG_TRIVIAL(error) << "Error in listener: " << e.what();
           }
         }
       })
