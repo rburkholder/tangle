@@ -51,6 +51,9 @@ using response_t = http::response<http::string_body>;
 namespace {
   using mapRequest_t = std::unordered_map<std::string, uint64_t>;
   mapRequest_t mapRequest;
+
+  thread_local sol_lua_t sol_lua;
+
 }
 
 struct state_t {
@@ -112,7 +115,6 @@ template<class Body, class Allocator>
 http::message_generator
 handle_request(
   state_t& state,
-  sol_lua_t& sol_lua,
   http::request<Body, http::basic_fields<Allocator>>&& request
 )
 {
@@ -389,9 +391,6 @@ run_session(
 )
 {
 
-  // use same sol/lua state for sessions with keepalive
-  sol_lua_t sol_lua;
-
   auto cs = co_await net::this_coro::cancellation_state;
 
   while ( !cs.cancelled() ) {
@@ -447,7 +446,7 @@ run_session(
           << "body: '" << request.body() << "'";
       }
 
-      auto response = handle_request( state, sol_lua, std::move( request ) );
+      auto response = handle_request( state, std::move( request ) );
 
       if ( !response.keep_alive() ) {
         co_await beast::async_write( stream, std::move( response ) );
