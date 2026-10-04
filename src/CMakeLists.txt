@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.14)
 
-PROJECT(boost.web)
+PROJECT(tangle)
 
 if (POLICY CMP0167)
   cmake_policy(SET CMP0167 NEW)
