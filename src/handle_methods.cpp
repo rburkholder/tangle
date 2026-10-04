@@ -99,8 +99,6 @@ void method_post( response_t& response ) {
 //   use file change to match against cached contents, don't pre-cache though
 void lua_method_get( std::string& path, sol_lua_t& sol_lua, http::response<http::string_body>& response ) {
 
-  sol_lua().open_libraries( sol::lib::base, sol::lib::package, sol::lib::table, sol::lib::string );
-
   response_common( response );
 
   sol_lua().set_function(
@@ -174,8 +172,6 @@ void lua_method_get( std::string& path, sol_lua_t& sol_lua, http::response<http:
 
 void lua_method_head( std::string& path, sol_lua_t& sol_lua, http::response<http::string_body>& response ) {
 
-  //sol_lua.m_sol.open_libraries( sol::lib::base, sol::lib::package, sol::lib::table, sol::lib::string );
-
   response_common( response );
 
   sol::load_result script;
@@ -198,8 +194,6 @@ void lua_method_head( std::string& path, sol_lua_t& sol_lua, http::response<http
 }
 
 void lua_method_post( std::string& path, sol_lua_t& sol_lua, http::response<http::string_body>& response ) {
-
-  sol_lua().open_libraries( sol::lib::base, sol::lib::package, sol::lib::table, sol::lib::string );
 
   response_common( response );
 

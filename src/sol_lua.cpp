@@ -36,7 +36,7 @@ sol_lua_t::sol_lua_t()
 : m_nInstance( m_nInstanceCounter.fetch_add( 1, std::memory_order_relaxed ) )
 {
   // maybe only open libraries when required?
-  m_sol.open_libraries( sol::lib::base );
+  m_sol.open_libraries( sol::lib::base, sol::lib::package, sol::lib::table, sol::lib::string );
   m_sol.set_function( "print", &sol_lua_t::print );
   f_instance_identify = m_sol.load( instance_identify );
   if ( f_instance_identify.valid() ) {
