@@ -25,9 +25,9 @@
 //
 //------------------------------------------------------------------------------
 
-#include <iostream>
 #include <thread>
 #include <vector>
+#include <iostream>
 
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
@@ -63,18 +63,27 @@ int main( int argc, char* argv[] ) {
     return EXIT_FAILURE;
   }
 
-  auto const address  = net::ip::make_address( choices.sListenAddress );
-  auto const endpoint = net::ip::tcp::endpoint{ address, choices.nPortHttps };
+  auto const listen_address  = net::ip::make_address( choices.sListenAddress );
+  auto const listen_endpoint = net::ip::tcp::endpoint{ listen_address, choices.nPortHttps };
+
+  const uint16_t nThreads = std::thread::hardware_concurrency();
+  if ( choices.nThreads == nThreads ) {}
+  else {
+    std::cout
+      << "suggested hardware maximum threads (" << nThreads << "),"
+      << "configuration specified threads (" << choices.nThreads << ")";
+  }
 
   // The io_context is required for all I/O
   net::io_context ioc{ choices.nThreads };
 
   // The SSL context is required, and holds certificates
-  ssl::context ctx{ ssl::context::tlsv12 };
+  //ssl::context ssl_ctx{ ssl::context::tlsv12 };
+  ssl::context ssl_ctx{ ssl::context::tlsv13 };
 
-  // This holds the self-signed certificate used by the server
+  // This holds the certificate used by the server
   if ( ( 0 < choices.sCertificatePathFullChain.size() ) && ( 0 < choices.sCertfificatePathPrivKey.size() ) ) {
-    load_server_certificate( ctx, choices.sCertificatePathFullChain, choices.sCertfificatePathPrivKey );
+    load_server_certificate( ssl_ctx, choices.sCertificatePathFullChain, choices.sCertfificatePathPrivKey );
   }
 
   // Track coroutines
@@ -82,8 +91,8 @@ int main( int argc, char* argv[] ) {
 
   // Create and launch a listening coroutine
   net::co_spawn(
-    net::make_strand(ioc),
-    listen( task_group, ctx, endpoint, choices ),
+    net::make_strand( ioc ),  // the strand can be removed to allow access to all threads
+    listen( task_group, ssl_ctx, listen_endpoint, choices ),
     task_group.adapt(
       []( std::exception_ptr e ) {
         if( e ) {
@@ -100,7 +109,7 @@ int main( int argc, char* argv[] ) {
   // Create and launch a signal handler coroutine
   net::co_spawn(
     net::make_strand( ioc ),
-    handle_signals(task_group), net::detached
+    handle_signals( task_group ), net::detached
   );
 
   // Run the I/O service on the requested number of threads
@@ -114,7 +123,7 @@ int main( int argc, char* argv[] ) {
 
   // Block until all the threads exit
   for ( auto& thread : vThread )
-    thread.join();
+    if( thread.joinable() ) thread.join();
 
   return EXIT_SUCCESS;
 }

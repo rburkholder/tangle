@@ -514,7 +514,7 @@ detect_session(
 
     //BOOST_LOG_TRIVIAL(info) << "ssl session closed (2)";
   }
-  else {
+  else { // no SSL
 
     state.bSsl = false;
     co_await run_session( stream, buffer, state );
