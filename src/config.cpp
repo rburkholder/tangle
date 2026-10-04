@@ -94,7 +94,7 @@ bool Load( const std::string& sFileName, Values& values ) {
     po::options_description config( "web.boost config file" );
     config.add_options()
 
-      ( sValue_thread_count.c_str(), po::value<uint16_t>( &values.nThreads)->default_value( 1 ), "number of servicing threads" )
+      ( sValue_thread_count.c_str(), po::value<uint16_t>( &values.nThreads )->default_value( 2 ), "number of servicing threads" )
 
       ( sValue_Static_Host.c_str(), po::value<std::string>( &values.sStaticHost ), "target host name" )
       ( sValue_Static_Directory.c_str(), po::value<std::string>( &values.sStaticDirectory )->default_value( "./" ), "directory for static content" )
