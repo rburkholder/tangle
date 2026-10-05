@@ -79,8 +79,6 @@ int main( int argc, char* argv[] ) {
   net::io_context ioc{ choices.nThreads };
 
   // The SSL context is required, and holds certificates
-  //ssl::context ssl_ctx{ ssl::context::tlsv12 };
-  //ssl::context ssl_ctx{ ssl::context::tlsv13 };
 
   // 1. Initialize with the generic 'tls' method (enables all TLS versions supported by OpenSSL)
   ssl::context ssl_ctx{ ssl::context::tls };
@@ -94,7 +92,7 @@ int main( int argc, char* argv[] ) {
     | ssl::context::no_sslv2
     | ssl::context::no_sslv3
     | ssl::context::no_tlsv1
-    | ssl::context::no_tlsv1
+    | ssl::context::no_tlsv1_1
   );
 
   // This holds the certificate used by the server
