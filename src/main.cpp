@@ -80,7 +80,22 @@ int main( int argc, char* argv[] ) {
 
   // The SSL context is required, and holds certificates
   //ssl::context ssl_ctx{ ssl::context::tlsv12 };
-  ssl::context ssl_ctx{ ssl::context::tlsv13 };
+  //ssl::context ssl_ctx{ ssl::context::tlsv13 };
+
+  // 1. Initialize with the generic 'tls' method (enables all TLS versions supported by OpenSSL)
+  ssl::context ssl_ctx{ ssl::context::tls };
+
+  // 2. Clear options to make sure no defaults are conflicting
+  ssl_ctx.clear_options( 0 );
+
+  // 3. Explicitly disable older protocols, leaving only TLSv1.2 and TLSv1.3 active
+  ssl_ctx.set_options(
+      ssl::context::default_workarounds
+    | ssl::context::no_sslv2
+    | ssl::context::no_sslv3
+    | ssl::context::no_tlsv1
+    | ssl::context::no_tlsv1
+  );
 
   // This holds the certificate used by the server
   if ( ( 0 < choices.sCertificatePathFullChain.size() ) && ( 0 < choices.sCertfificatePathPrivKey.size() ) ) {
