@@ -488,6 +488,10 @@ detect_session(
 
     ssl::stream<stream_type> ssl_stream{ std::move( stream ), ctx };
 
+    auto version = SSL_get_version( ssl_stream.native_handle() );
+    auto cipher = SSL_get_cipher_name( ssl_stream.native_handle() );
+    BOOST_LOG_TRIVIAL(info) << "ssl version: " << version << ", " << cipher;
+
     auto bytes_transferred = co_await ssl_stream.async_handshake(
       ssl::stream_base::server, buffer.data()
     );
