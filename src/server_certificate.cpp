@@ -81,10 +81,7 @@ load_server_certificate(
   //long r1 = SSL_CTX_set_tlsext_servername_callback( phandle, &ssl_cb_tlsext_servername ); // ctx, cb
   //long r2 = SSL_CTX_set_tlsext_servername_arg( phandle, &local_ssl_ctx_ );
 
-  ctx.set_options(
-    boost::asio::ssl::context::default_workarounds |
-    boost::asio::ssl::context::no_sslv2 |
-    boost::asio::ssl::context::single_dh_use);
+  ctx.set_options( boost::asio::ssl::context::single_dh_use );
 
   ctx.use_certificate_chain_file (
     sPathFullChain
