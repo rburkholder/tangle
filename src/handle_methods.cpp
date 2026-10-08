@@ -37,6 +37,7 @@ namespace {
   //static const std::string c_sVersion( "ounl-lua/1.0");
   static const std::string c_sVersion( "tangle/1.0");
 
+  // each needs to be thread safe, maintain state in a different structure
   thread_local sol_lua_t sol_lua;
 
   template<typename Response>
