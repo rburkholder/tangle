@@ -27,6 +27,7 @@
 
 #include <fmt/chrono.h>
 
+#include "sol_lua.hpp"
 #include "handle_methods.hpp"
 
 // how-to: build folder with index.lua.  folder is the long name for seo, auto runs the index.lua file for content
@@ -35,6 +36,8 @@
 namespace {
   //static const std::string c_sVersion( "ounl-lua/1.0");
   static const std::string c_sVersion( "tangle/1.0");
+
+  thread_local sol_lua_t sol_lua;
 
   template<typename Response>
   void response_common( Response& response ) {
@@ -102,7 +105,7 @@ void method_post( response_t& response ) {
 // TODO: convert read in to async operation, coroutine?, async load file(s), then pass as text based scripts
 //   pre-compile to shared memory for re-use by luajit across sessions
 //   use file change to match against cached contents, don't pre-cache though
-void lua_method_get( std::string& path, sol_lua_t& sol_lua, http::response<http::string_body>& response ) {
+void lua_method_get( std::string& path, http::response<http::string_body>& response ) {
 
   response_common( response );
 
@@ -135,15 +138,15 @@ void lua_method_get( std::string& path, sol_lua_t& sol_lua, http::response<http:
 
   sol_lua().set_function(
     "GetFunction",
-    [&sol_lua,&response]( const std::string_view svFunctionName ) {
+    [&response]( const std::string_view svFunctionName ) {
       using mapFunctions_t = std::unordered_map<std::string, std::function<void()>>;
-      mapFunctions_t mapFunctions;
-      mapFunctions[ "GetStats" ] = [&sol_lua](){
-        sol_lua().set_function(
-          "GetStats",
-          [](){}
-        );
-      };
+      //mapFunctions_t mapFunctions;
+      //mapFunctions[ "GetStats" ] = [&sol_lua](){
+      //  sol_lua().set_function(
+      //    "GetStats",
+      //    [](){}
+      //  );
+      //};
     }
   );
 
@@ -175,7 +178,7 @@ void lua_method_get( std::string& path, sol_lua_t& sol_lua, http::response<http:
 
 }
 
-void lua_method_head( std::string& path, sol_lua_t& sol_lua, http::response<http::string_body>& response ) {
+void lua_method_head( std::string& path, http::response<http::string_body>& response ) {
 
   response_common( response );
 
@@ -198,7 +201,7 @@ void lua_method_head( std::string& path, sol_lua_t& sol_lua, http::response<http
   response.prepare_payload();
 }
 
-void lua_method_post( std::string& path, sol_lua_t& sol_lua, http::response<http::string_body>& response ) {
+void lua_method_post( std::string& path, http::response<http::string_body>& response ) {
 
   response_common( response );
 

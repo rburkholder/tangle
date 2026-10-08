@@ -9,7 +9,6 @@
 #include <boost/beast/ssl.hpp>
 
 #include "listen.hpp"
-#include "sol_lua.hpp"
 #include "mime_type.hpp"
 #include "handle_methods.hpp"
 
@@ -54,9 +53,6 @@ using response_t = http::response<http::string_body>;
 namespace {
   using mapRequest_t = std::unordered_map<std::string, uint64_t>;
   mapRequest_t mapRequest;
-
-  thread_local sol_lua_t sol_lua;
-
 }
 
 struct state_t {
@@ -210,7 +206,7 @@ handle_request(
           response_t response{ http::status::ok, request.version() };
           response.set( http::field::content_type, mt_entry.name );
           response.keep_alive( request.keep_alive() );
-          lua_method_get( path, sol_lua, response );
+          lua_method_get( path, response );
           //response.prepare_payload();
           return response;
         }
@@ -232,7 +228,7 @@ handle_request(
           response_t response{ http::status::ok, request.version() };
           response.set( http::field::content_type, mt_entry.name );
           response.keep_alive( request.keep_alive() );
-          lua_method_post( path, sol_lua, response );
+          lua_method_post( path, response );
           //response.prepare_payload();
           return response;
         }
@@ -242,7 +238,7 @@ handle_request(
           response_t response{ http::status::ok, request.version() };
           response.set( http::field::content_type, mt_entry.name );
           response.keep_alive( request.keep_alive() );
-          lua_method_head( path, sol_lua, response );
+          lua_method_head( path, response );
           //response.prepare_payload();
           return response;
         }

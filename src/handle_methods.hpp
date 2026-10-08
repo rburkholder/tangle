@@ -48,6 +48,6 @@ void method_head( http::response<http::empty_body>& );
 void method_get( http::response<http::file_body>& );
 void method_post( response_t& );
 
-void lua_method_get(  std::string&, sol_lua_t&, http::response<http::string_body>& );
-void lua_method_head(  std::string&, sol_lua_t&, http::response<http::string_body>& );
-void lua_method_post( std::string&, sol_lua_t&, http::response<http::string_body>& );
+void lua_method_get(  std::string&, http::response<http::string_body>& );
+void lua_method_head(  std::string&, http::response<http::string_body>& );
+void lua_method_post( std::string&, http::response<http::string_body>& );
