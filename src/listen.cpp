@@ -119,12 +119,13 @@ handle_request(
 )
 {
 
-  static const mime_type mt;
+  static const mime_type mt; // read only lookup
 
   std::string path;
   uint64_t count {};
   std::string message( "OK" );
   boost::scope::defer_guard guard{
+    // summary message once scope is exited
     [&message,&state,&request,&path,&count](){
       // log the action
       BOOST_LOG_TRIVIAL(info)
@@ -132,7 +133,7 @@ handle_request(
         << "'" << message << "','"
         << ( state.bSsl ? ( ( nullptr == state.ssl_name ) ? "unnamed" : state.ssl_name ) : ( "http") ) << "','"
         << request.method() << "','" << request.target() << "','" << path << "',"
-        << mapRequest.size() << "," << count;
+        << "#unique=" << mapRequest.size() << ",seen=" << count;
     }
   };
 
