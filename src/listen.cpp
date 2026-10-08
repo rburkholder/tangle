@@ -197,6 +197,12 @@ handle_request(
     return bad_request( request, message, state );
   }
 
+  // todo: choose a class with static functions, normal or lua
+  //   static functions are head, get, post
+  //   just needs:
+  //     request.version()
+  //     request.keep_alive()
+  //     request.target()
   if ( mime_type::type_t::lua == mt_entry.type ) {
     switch ( request.method() ) {
       case http::verb::get:
