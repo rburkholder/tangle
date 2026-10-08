@@ -33,7 +33,8 @@
 //   folder name is redirect to index file?
 
 namespace {
-  static const std::string c_sVersion( "ounl-lua/1.0");
+  //static const std::string c_sVersion( "ounl-lua/1.0");
+  static const std::string c_sVersion( "tangle/1.0");
 
   template<typename Response>
   void response_common( Response& response ) {
@@ -46,6 +47,10 @@ namespace {
     // a library format or other grouping mechanism for faster loading
   }
 
+}
+
+void response_websocket( boost::beast::websocket::response_type& response ) {
+  response_common( response );
 }
 
 void response_bad_request( response_t& response, const boost::beast::string_view why ) {

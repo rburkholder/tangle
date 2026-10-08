@@ -23,8 +23,8 @@
 
 #include <functional>
 
-//#include <boost/beast.hpp>
 #include <boost/beast/http.hpp>
+#include <boost/beast/websocket.hpp>
 
 // each needs to be thread safe, maintain state in a different structure
 #include "sol_lua.hpp"
@@ -35,6 +35,8 @@ using response_t = http::response<http::string_body>;
 
 using fResponse_t = std::function<void( response_t& )>;
 using fResponseSv_t = std::function<void( response_t&, const boost::beast::string_view )>;
+
+void response_websocket( boost::beast::websocket::response_type& );
 
 void response_bad_request(  response_t&, const boost::beast::string_view why );
 void response_not_found(    response_t&, const boost::beast::string_view target );

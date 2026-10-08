@@ -348,11 +348,12 @@ run_websocket_session(
   // Set a decorator to change the Server of the handshake
   ws.set_option(
     websocket::stream_base::decorator(
-      [](websocket::response_type& res) {
-        res.set(
-          http::field::server,
-          std::string(BOOST_BEAST_VERSION_STRING) +
-              " advanced-server-flex");
+      [](websocket::response_type& response) {
+        //res.set(
+        //  http::field::server,
+        //  std::string(BOOST_BEAST_VERSION_STRING) +
+        //      " advanced-server-flex");
+        response_websocket( response );
       }
     )
   );
