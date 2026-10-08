@@ -9,13 +9,16 @@
 #include <boost/beast/ssl.hpp>
 
 #include "listen.hpp"
-#include "config.hpp"
 #include "sol_lua.hpp"
 #include "mime_type.hpp"
 #include "handle_methods.hpp"
 
+namespace beast     = boost::beast;
 namespace http      = beast::http;
 namespace websocket = beast::websocket;
+
+using acceptor_type = typename net::ip::tcp::acceptor::rebind_executor<executor_type>::other;
+using stream_type   = typename beast::tcp_stream::rebind_executor<executor_type>::other;
 
 // Append an HTTP rel-path to a local filesystem path.
 // The returned path is normalized for the platform.
