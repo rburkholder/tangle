@@ -35,11 +35,12 @@
 
 #include <boost/beast.hpp>
 
+#include <ou/anomalon/listen.hpp>
+#include <ou/anomalon/task_group.hpp>
+#include <ou/anomalon/server_certificate.hpp>
+
 #include "config.hpp"
-#include "listen.hpp"
-#include "task_group.hpp"
 #include "handle_signals.hpp"
-#include "server_certificate.hpp"
 
 namespace net       = boost::asio;
 namespace ssl       = boost::asio::ssl;
@@ -106,7 +107,7 @@ int main( int argc, char* argv[] ) {
   // Create and launch a listening coroutine
   net::co_spawn(
     net::make_strand( ioc ),  // the strand can be removed to allow access to all threads
-    listen( task_group, ssl_ctx, listen_endpoint, choices ),
+    listen( task_group, ssl_ctx, listen_endpoint, choices.sContentDirectory ),
     task_group.adapt(
       []( std::exception_ptr e ) {
         if( e ) {

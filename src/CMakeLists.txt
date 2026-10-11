@@ -21,25 +21,14 @@ find_package(Boost REQUIRED COMPONENTS log url program_options)
 set(
   file_hpp
     config.hpp
-    handle_methods.hpp
     handle_signals.hpp
-    listen.hpp
-    mime_type.hpp
-    server_certificate.hpp
-    sol_lua.hpp
-    task_group.hpp
   )
 
 set(
   file_cpp
     config.cpp
-    handle_methods.cpp
     handle_signals.cpp
-    listen.cpp
     main.cpp
-    mime_type.cpp
-    server_certificate.cpp
-    sol_lua.cpp
   )
 
 add_executable(
@@ -65,6 +54,7 @@ target_link_directories(
 
 target_link_libraries(
   ${PROJECT_NAME}
+    ou_anomalon
     pthread
     ${Boost_LIBRARIES}
     luajit-5.1
