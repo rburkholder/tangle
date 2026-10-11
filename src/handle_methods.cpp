@@ -19,6 +19,20 @@
  * Created: July 22, 2026 18:36
  */
 
+// TODO
+/*
+sol::thread lua_th = sol::thread::create(master);
+sol::state_view local_lua_state = lua_th.state();
+
+sol::protected_function handler = local_lua_state["route_http"];
+if (handler.valid()) {
+    auto result = co_await handler(path); // Safely executed on an isolated stack
+    if (result.valid()) {
+        body = result.get<std::string>();
+    }
+}
+*/
+
 #include <chrono>
 #include <string>
 #include <unordered_map>
