@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.14)
 
-PROJECT(boost.web.root)
+PROJECT(tangle.root)
 
 # see https://blog.raymond.burkholder.net/index.php?/archives/1183-GCC-Optimization-for-Native-Architecture.html
 add_definitions(-march=native)
