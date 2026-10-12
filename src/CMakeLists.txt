@@ -54,11 +54,11 @@ target_link_directories(
 
 target_link_libraries(
   ${PROJECT_NAME}
-    ou_anomalon
+    ou_anomalon.a
     pthread
     ${Boost_LIBRARIES}
     luajit-5.1
     crypto
     ssl
-    fmt
+    fmt.a
   )
