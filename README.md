@@ -60,6 +60,10 @@ sudo make install
 popd
 ```
 
+### build repertory
+
+See library at [rburkholder/repertory](https://github.com/rburkholder/repertory)
+
 ### build project
 ```bash
 git clone --depth=1 https://github.com/rburkholder/tangle.git
