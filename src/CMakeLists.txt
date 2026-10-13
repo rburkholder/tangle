@@ -21,13 +21,11 @@ find_package(Boost REQUIRED COMPONENTS log url program_options)
 set(
   file_hpp
     config.hpp
-    handle_signals.hpp
   )
 
 set(
   file_cpp
     config.cpp
-    handle_signals.cpp
     main.cpp
   )
 

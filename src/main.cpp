@@ -15,7 +15,7 @@
 /*
  * File:    main.cpp
  * Author:  raymond@burkholder.net
- * Project: boost.web
+ * Project: tangle
  * Created: July 20, 2026 18:36
  */
 
@@ -30,20 +30,18 @@
 
 #include <boost/log/trivial.hpp>
 
-#include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
-
-#include <boost/beast.hpp>
+#include <boost/asio/io_context.hpp>
 
 #include <ou/anomalon/listen.hpp>
+#include <ou/anomalon/handle_signals.hpp>
 #include <ou/anomalon/task_group.hpp>
 #include <ou/anomalon/server_certificate.hpp>
 
 #include "config.hpp"
-#include "handle_signals.hpp"
 
-namespace net       = boost::asio;
-namespace ssl       = boost::asio::ssl;
+namespace net = boost::asio;
+namespace ssl = boost::asio::ssl;
 
 using executor_type = net::strand<net::io_context::executor_type>;
 
